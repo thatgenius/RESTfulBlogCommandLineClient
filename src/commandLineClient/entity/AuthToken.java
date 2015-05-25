@@ -1,4 +1,4 @@
-package com.company.entity;
+package commandLineClient.entity;
 
 public class AuthToken {
 

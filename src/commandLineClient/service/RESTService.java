@@ -1,7 +1,8 @@
-package com.company.service;
+package commandLineClient.service;
 
-import com.company.entity.AuthToken;
-import com.company.entity.Post;
+import commandLineClient.entity.AuthToken;
+import commandLineClient.entity.Comment;
+import commandLineClient.entity.Post;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,12 +10,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
+
 public class RESTService {
 
     static final String RESTServiceAddress = "http://localhost:8080/rest";
-
-    //login and pass as follows: login:pass
-    static final String RESTServicePassword = "Basic " ;
 
     private static String getCredentials() {
         return "Basic " + AuthToken.getEncoded();
@@ -34,6 +33,16 @@ public class RESTService {
         catch(RestClientException e) {
         }
         return post;
+    }
+
+    public static Comment[] getCommentsByPostId(int id) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = RESTServiceAddress + "/rest/posts/" + id + "/comments";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", getCredentials());
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+        Comment[] comments = restTemplate.exchange(url, HttpMethod.GET, request, Comment[].class).getBody();
+        return comments;
     }
 
     public static Post[] getPosts() {

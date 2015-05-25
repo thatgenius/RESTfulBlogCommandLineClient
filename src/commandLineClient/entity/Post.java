@@ -1,15 +1,6 @@
-package com.company.entity;
+package commandLineClient.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "Post")
 public class Post {
-    @Id
-    @GeneratedValue
     int id;
     String title;
     String content;
@@ -36,10 +27,6 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String toString() {
-        return "id: " + id + " title: " + title + " content: " + content;
     }
 }
 

@@ -1,10 +1,9 @@
-package com.company.service;
+package commandLineClient.service;
 
-import com.company.entity.Post;
-
+import commandLineClient.entity.Comment;
+import commandLineClient.entity.Post;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ParamsParser {
 
@@ -35,6 +34,7 @@ public class ParamsParser {
     }
 
     private static boolean getPostByIdSecured(String[] params) {
+        ClientService.checkAuthorization();
         try {
             int arg2 = Integer.valueOf(params[1]);
             return getPostById(arg2);
@@ -46,12 +46,14 @@ public class ParamsParser {
 
     private static boolean getPostById(int id) {
         Post post = RESTService.getPostById(id);
+        Comment[] comments = Comment.orderComments(RESTService.getCommentsByPostId(id));
         if (post == null) System.out.println("Post with id " + id + " does not exist");
-        else BlogAPIResponsePrinter.print(post);
+        else BlogAPIResponsePrinter.print(post, comments);
         return true;
     }
 
     private static boolean getPosts() {
+        ClientService.checkAuthorization();
         Post[] posts = RESTService.getPosts();
         if (posts == null) System.out.println("No posts have been posted yet");
         else BlogAPIResponsePrinter.print(posts);
@@ -59,6 +61,7 @@ public class ParamsParser {
     }
 
     private static boolean deletePostByIdSecured(String[] params) {
+        ClientService.checkAuthorization();
         try {
             int arg2 = Integer.valueOf(params[1]);
             return deletePostById(arg2);
@@ -83,7 +86,7 @@ public class ParamsParser {
     }
 
     private static boolean parseCreate(String[] params) {
-
+        ClientService.checkAuthorization();
 
 
         if (params[1].toLowerCase().startsWith("title") && params[2].toLowerCase().startsWith("content")) {
@@ -111,7 +114,8 @@ public class ParamsParser {
         return false;
     }
 
-    public static String[] getParams(String str) {
+    public static String[] getParams() throws IOException {
+        String str = ClientService.getReader().readLine();
         String[] strs = str.split(" ");
         int i = 0;
         for (String s : strs) {
